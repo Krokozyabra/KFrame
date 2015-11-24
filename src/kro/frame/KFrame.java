@@ -2,13 +2,17 @@ package kro.frame;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
-public class KFrame {
-	private JFrame jFrame;
+import com.sun.xml.internal.ws.db.glassfish.BridgeWrapper;
+
+public class KFrame extends JFrame{
 	private KCanvas kCanvas;
 	
 	private BufferStrategy bufferStrategy;
@@ -27,6 +31,8 @@ public class KFrame {
 	private int WIDTH, HEIGHT;
 	
 	public KFrame(int WIDTH, int HEIGHT, String title, int numBuffers, Paintable paintable) {
+		super(title);
+		
 		this.title = title;
 		this.numBuffers = numBuffers;
 		this.WIDTH = WIDTH;
@@ -37,24 +43,24 @@ public class KFrame {
 	}
 	
 	private void init(){
-		jFrame = new JFrame(title);
-		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jFrame.setResizable(false);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
 		
 		kCanvas = new KCanvas();
 		kCanvas.setSize(WIDTH, HEIGHT);
 		
 		bufferedImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		
-		jFrame.add(kCanvas);
+		add(kCanvas);
 		
-		jFrame.pack();
-		jFrame.setLocationRelativeTo(null);
+		pack();
+		setLocationRelativeTo(null);
 		
 	}
 	
-	public void show(){
-		jFrame.setVisible(true);
+	
+	public void display(){
+		super.setVisible(true);
 		
 		kCanvas.createBufferStrategy(numBuffers);
 		bufferStrategy = kCanvas.getBufferStrategy();
@@ -71,56 +77,89 @@ public class KFrame {
 		bufferStrategy.show();
 	}
 
-	public JFrame getjFrame() {
-		return jFrame;
-	}
-
-	public KCanvas getkCanvas() {
+	
+	
+	
+	
+	public KCanvas getKCanvas(){
 		return kCanvas;
 	}
 
-	public BufferStrategy getBufferStrategy() {
+	public BufferStrategy getBufferStrategy(){
 		return bufferStrategy;
 	}
 
-	public BufferedImage getBufferedImage() {
-		return bufferedImage;
+	public int getNumBuffers(){
+		return numBuffers;
 	}
 
-	public Graphics2D getCanvasGraphics() {
-		return canvasGraphics;
-	}
-
-	public Graphics2D getBufferStrategyGraphics() {
-		return bufferStrategyGraphics;
-	}
-
-	public Graphics2D getBufferedImageGraphics() {
-		return bufferedImageGraphics;
-	}
-
-	public String getTitle() {
+	public String getTitle(){
 		return title;
 	}
 
-	public int getWIDTH() {
+	public Paintable getPaintable(){
+		return paintable;
+	}
+
+	public int getWIDTH(){
 		return WIDTH;
 	}
 
-	public int getHEIGHT() {
+	public int getHEIGHT(){
 		return HEIGHT;
 	}
+	
 
-	public void setjFrame(JFrame jFrame) {
-		this.jFrame = jFrame;
-	}
-
-	public void setkCanvas(KCanvas kCanvas) {
+	public void setKCanvas(KCanvas kCanvas){
 		this.kCanvas = kCanvas;
 	}
 
-	public void setBufferedImage(BufferedImage bufferedImage) {
-		this.bufferedImage = bufferedImage;
+	public void setBufferStrategy(BufferStrategy bufferStrategy){
+		this.bufferStrategy = bufferStrategy;
+	}
+
+	public void setNumBuffers(int numBuffers){
+		this.numBuffers = numBuffers;
+		
+		try{
+			kCanvas.createBufferStrategy(numBuffers);
+			bufferStrategy = kCanvas.getBufferStrategy();
+			
+			bufferStrategyGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
+			canvasGraphics = (Graphics2D) kCanvas.getGraphics();
+			bufferedImageGraphics = bufferedImage.createGraphics();
+		}catch(Exception ex){
+		}
+	}
+
+	public void setTitle(String title){
+		this.title = title;
+		super.setTitle(title);
+	}
+
+	public void setPaintable(Paintable paintable){
+		this.paintable = paintable;
+	}
+
+	public void setWIDTH(int WIDTH){
+		this.WIDTH = WIDTH;
+		kCanvas.setSize(WIDTH, HEIGHT);
+	}
+
+	public void setHEIGHT(int HEIGHT){
+		this.HEIGHT = HEIGHT;
+		kCanvas.setSize(WIDTH, HEIGHT);
+	}
+
+	public void addMouseListener(MouseListener mouseListener){
+		kCanvas.addMouseListener(mouseListener);
 	}
 	
+	public void addKeyListener(KeyListener keyListener){
+		kCanvas.addKeyListener(keyListener);
+	}
+	
+	public void addMouseMotionListener(MouseMotionListener mouseMotionListener){
+		kCanvas.addMouseMotionListener(mouseMotionListener);
+	}
 }
