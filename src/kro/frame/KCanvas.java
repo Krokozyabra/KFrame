@@ -11,15 +11,15 @@ public class KCanvas extends Canvas {
 	}
 	
 	public void addMouseListener(MouseListener mouseListener){
-		addMouseListener(mouseListener);
+		super.addMouseListener(mouseListener);
 	}
 	
 	public void addKeyListener(KeyListener keyListener){
-		addKeyListener(keyListener);
+		super.addKeyListener(keyListener);
 	}
 	
 	public void addMouseMotionListener(MouseMotionListener mouseMotionListener){
-		addMouseMotionListener(mouseMotionListener);
+		super.addMouseMotionListener(mouseMotionListener);
 	}
 	
 }
