@@ -30,14 +30,14 @@ public class KFrame extends JFrame{
 	private Paintable paintable;
 	
 	private boolean isShowing = false;
-	private boolean aux = true;
+	private boolean firstTime = true;
 	
 	
 	private int WIDTH, HEIGHT;
-
 	
 	
-	public KFrame(int WIDTH, int HEIGHT, String title, int numBuffers, Paintable paintable) {
+	
+	public KFrame(int WIDTH, int HEIGHT, String title, int numBuffers, Paintable paintable){
 		super(title);
 		
 		this.title = title;
@@ -64,40 +64,38 @@ public class KFrame extends JFrame{
 		setLocationRelativeTo(null);
 		
 	}
-
-	public void	setVisible(boolean b){
+	
+	public void setVisible(boolean b){
 		super.setVisible(b);
 		
-		if(b){
-			if(aux){
-				isShowing = true;
-				kCanvas.createBufferStrategy(numBuffers);
-				bufferStrategy = kCanvas.getBufferStrategy();
-				
-				bufferStrategyGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
-				canvasGraphics = (Graphics2D) kCanvas.getGraphics();
-				bufferedImageGraphics = bufferedImage.createGraphics();
-				
-				aux = false;
-			}
-		}else{
-			isShowing = false;
+		isShowing = b;
+		if(firstTime){
+			kCanvas.createBufferStrategy(numBuffers);
+			bufferStrategy = kCanvas.getBufferStrategy();
+			
+			bufferStrategyGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
+			canvasGraphics = (Graphics2D) kCanvas.getGraphics();
+			bufferedImageGraphics = bufferedImage.createGraphics();
+			
+			firstTime = false;
 		}
 		
 	}
-
+	
 	
 	
 	
 	public void paint(){
-		if(isShowing){
-			bufferStrategyGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			paintable.paint(bufferStrategyGraphics);
-			
-			bufferStrategy.show();
-		}
+		new Thread(() -> {
+			if(isShowing){
+				bufferStrategyGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				paintable.paint(bufferStrategyGraphics);
+				
+				bufferStrategy.show();
+			}
+		}).start();
 	}
-
+	
 	
 	
 	
@@ -105,27 +103,27 @@ public class KFrame extends JFrame{
 	public KCanvas getKCanvas(){
 		return kCanvas;
 	}
-
+	
 	public BufferStrategy getBufferStrategy(){
 		return bufferStrategy;
 	}
-
+	
 	public int getNumBuffers(){
 		return numBuffers;
 	}
-
+	
 	public String getTitle(){
 		return title;
 	}
-
+	
 	public Paintable getPaintable(){
 		return paintable;
 	}
-
+	
 	public int getWidth(){
 		return WIDTH;
 	}
-
+	
 	public int getHeight(){
 		return HEIGHT;
 	}
@@ -133,17 +131,17 @@ public class KFrame extends JFrame{
 	public boolean isShowing(){
 		return isShowing;
 	}
-
+	
 	
 	
 	public void setKCanvas(KCanvas kCanvas){
 		this.kCanvas = kCanvas;
 	}
-
+	
 	public void setBufferStrategy(BufferStrategy bufferStrategy){
 		this.bufferStrategy = bufferStrategy;
 	}
-
+	
 	public void setNumBuffers(int numBuffers){
 		this.numBuffers = numBuffers;
 		
@@ -157,22 +155,22 @@ public class KFrame extends JFrame{
 		}catch(Exception ex){
 		}
 	}
-
+	
 	public void setTitle(String title){
 		this.title = title;
 		super.setTitle(title);
 	}
-
+	
 	public void setPaintable(Paintable paintable){
 		this.paintable = paintable;
 	}
-
+	
 	public void setWidth(int width){
 		this.WIDTH = width;
 		kCanvas.setSize(width, HEIGHT);
 		pack();
 	}
-
+	
 	public void setHeight(int height){
 		this.HEIGHT = height;
 		kCanvas.setSize(WIDTH, height);
@@ -185,7 +183,7 @@ public class KFrame extends JFrame{
 		kCanvas.setSize(width, height);
 		pack();
 	}
-
+	
 	
 	
 	
@@ -200,5 +198,5 @@ public class KFrame extends JFrame{
 	public void addMouseMotionListener(MouseMotionListener mouseMotionListener){
 		kCanvas.addMouseMotionListener(mouseMotionListener);
 	}
-
+	
 }
