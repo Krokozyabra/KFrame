@@ -145,10 +145,12 @@ public class KFrame extends JFrame{
 		return isShowing;
 	}
 
-	public boolean skipPainting(){
+	public boolean isSkipPainting(){
 		return skipPainting;
 	}
 
+	
+	
 
 
 	public void setKCanvas(KCanvas kCanvas){
