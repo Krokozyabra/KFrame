@@ -200,6 +200,14 @@ public class KFrame extends JFrame{
 		this.WIDTH = width;
 		this.HEIGHT = height;
 		kCanvas.setSize(width, height);
+		
+		kCanvas.createBufferStrategy(numBuffers);
+		bufferStrategy = kCanvas.getBufferStrategy();
+
+		bufferStrategyGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
+		canvasGraphics = (Graphics2D) kCanvas.getGraphics();
+		bufferedImageGraphics = bufferedImage.createGraphics();
+		
 		pack();
 	}
 
