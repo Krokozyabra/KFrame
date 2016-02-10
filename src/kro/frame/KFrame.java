@@ -149,9 +149,9 @@ public class KFrame extends JFrame{
 		return skipPainting;
 	}
 
-	
-	
 
+
+	
 
 	public void setKCanvas(KCanvas kCanvas){
 		this.kCanvas = kCanvas;
