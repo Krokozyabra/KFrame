@@ -1,5 +1,7 @@
 package kro.frame;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyListener;
@@ -14,36 +16,29 @@ import javax.lang.model.SourceVersion;
 import javax.swing.JFrame;
 
 public class KFrame extends JFrame{
-	private KCanvas kCanvas;
+	KPanel kPanel;
 
-	private BufferStrategy bufferStrategy;
-	private BufferedImage bufferedImage;
+	private Graphics2D gr;
 
-	private Graphics2D canvasGraphics;
-	private Graphics2D bufferStrategyGraphics;
-	private Graphics2D bufferedImageGraphics;
-
-	private int numBuffers;
 
 	private String title;
 
 	private Paintable paintable;
 
 	private boolean isShowing = false;
-	private boolean firstTime = true;
 
 
 	private int WIDTH, HEIGHT;
+	private BufferedImage bufferedImage;
 
 	private boolean skipPainting = false;
 
 
 
-	public KFrame(int WIDTH, int HEIGHT, String title, int numBuffers, Paintable paintable){
+	public KFrame(int WIDTH, int HEIGHT, String title, Paintable paintable){
 		super(title);
 
 		this.title = title;
-		this.numBuffers = numBuffers;
 		this.WIDTH = WIDTH;
 		this.HEIGHT = HEIGHT;
 		this.paintable = paintable;
@@ -55,56 +50,61 @@ public class KFrame extends JFrame{
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 
-		kCanvas = new KCanvas();
-		kCanvas.setSize(WIDTH, HEIGHT);
+		kPanel = new KPanel();
+		kPanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
 		bufferedImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		gr = bufferedImage.createGraphics();
 
-		add(kCanvas);
+		add(kPanel);
 
 		pack();
 		setLocationRelativeTo(null);
+	}
 
+
+	private void changeSize(int width, int height){
+		WIDTH = width;
+		HEIGHT = height;
+
+		kPanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+
+		BufferedImage bufferedImage2 = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		gr = bufferedImage2.createGraphics();
+		gr.drawImage(bufferedImage, 0, 0, WIDTH, HEIGHT, null);
+
+		bufferedImage = bufferedImage2;
+
+		pack();
+		setLocationRelativeTo(null);
 	}
 
 	public void setVisible(boolean b){
 		super.setVisible(b);
-
 		isShowing = b;
-		if(firstTime){
-			kCanvas.createBufferStrategy(numBuffers);
-			bufferStrategy = kCanvas.getBufferStrategy();
-
-			bufferStrategyGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
-			canvasGraphics = (Graphics2D) kCanvas.getGraphics();
-			bufferedImageGraphics = bufferedImage.createGraphics();
-
-			firstTime = false;
-		}
-
 	}
 
 
 
 
 	public void paint(){
-		if(skipPainting){
-			new Thread(new Runnable(){
+		if(isShowing){
+			Runnable runnable = new Runnable(){
 				public void run(){
-					if(isShowing){
-						bufferStrategyGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-						paintable.paint(bufferStrategyGraphics);
+					gr.setColor(new Color(0xff000000));
+					gr.fillRect(0, 0, WIDTH, HEIGHT);
 
-						bufferStrategy.show();
-					}
+					gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+					paintable.paint(gr);
+
+					kPanel.getGraphics().drawImage(bufferedImage, 0, 0, null);
 				}
-			}).start();
-		}else{
-			if(isShowing){
-				bufferStrategyGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				paintable.paint(bufferStrategyGraphics);
+			};
 
-				bufferStrategy.show();
+			if(skipPainting){
+				new Thread(runnable).start();
+			}else{
+				runnable.run();
 			}
 		}
 	}
@@ -112,17 +112,12 @@ public class KFrame extends JFrame{
 
 
 
-
-	public KCanvas getKCanvas(){
-		return kCanvas;
+	public KPanel getKPanel(){
+		return kPanel;
 	}
 
-	public BufferStrategy getBufferStrategy(){
-		return bufferStrategy;
-	}
-
-	public int getNumBuffers(){
-		return numBuffers;
+	public Graphics2D getGraphics(){
+		return gr;
 	}
 
 	public String getTitle(){
@@ -133,46 +128,35 @@ public class KFrame extends JFrame{
 		return paintable;
 	}
 
-	public int getWidth(){
+	public boolean isShowing(){
+		return isShowing;
+	}
+
+	public int getWIDTH(){
 		return WIDTH;
 	}
 
-	public int getHeight(){
+	public int getHEIGHT(){
 		return HEIGHT;
 	}
 
-	public boolean isShowing(){
-		return isShowing;
+	public BufferedImage getBufferedImage(){
+		return bufferedImage;
 	}
 
 	public boolean isSkipPainting(){
 		return skipPainting;
 	}
 
-
-
 	
-
-	public void setKCanvas(KCanvas kCanvas){
-		this.kCanvas = kCanvas;
+	
+	
+	public void setKPanel(KPanel kPanel){
+		this.kPanel = kPanel;
 	}
 
-	public void setBufferStrategy(BufferStrategy bufferStrategy){
-		this.bufferStrategy = bufferStrategy;
-	}
-
-	public void setNumBuffers(int numBuffers){
-		this.numBuffers = numBuffers;
-
-		try{
-			kCanvas.createBufferStrategy(numBuffers);
-			bufferStrategy = kCanvas.getBufferStrategy();
-
-			bufferStrategyGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
-			canvasGraphics = (Graphics2D) kCanvas.getGraphics();
-			bufferedImageGraphics = bufferedImage.createGraphics();
-		}catch(Exception ex){
-		}
+	public void setGraphics(Graphics2D gr){
+		this.gr = gr;
 	}
 
 	public void setTitle(String title){
@@ -185,49 +169,40 @@ public class KFrame extends JFrame{
 	}
 
 	public void setWidth(int width){
-		this.WIDTH = width;
-		kCanvas.setSize(width, HEIGHT);
-		pack();
+		changeSize(width, HEIGHT);
 	}
 
 	public void setHeight(int height){
-		this.HEIGHT = height;
-		kCanvas.setSize(WIDTH, height);
-		pack();
+		changeSize(WIDTH, height);
 	}
 
 	public void setSize(int width, int height){
-		this.WIDTH = width;
-		this.HEIGHT = height;
-		kCanvas.setSize(width, height);
-		
-		kCanvas.createBufferStrategy(numBuffers);
-		bufferStrategy = kCanvas.getBufferStrategy();
-
-		bufferStrategyGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
-		canvasGraphics = (Graphics2D) kCanvas.getGraphics();
-		bufferedImageGraphics = bufferedImage.createGraphics();
-		
-		pack();
+		changeSize(width, height);
 	}
 
-	public void setSkipPainting(boolean b){
-		skipPainting = b;
+	public void setBufferedImage(BufferedImage bufferedImage){
+		this.bufferedImage = bufferedImage;
+	}
+
+	public void setSkipPainting(boolean skipPainting){
+		this.skipPainting = skipPainting;
 	}
 
 
+
+
+
+	public void addKeyListener(KeyListener keyListener){
+		kPanel.addKeyListener(keyListener);
+	}
 
 
 	public void addMouseListener(MouseListener mouseListener){
-		kCanvas.addMouseListener(mouseListener);
-	}
-
-	public void addKeyListener(KeyListener keyListener){
-		kCanvas.addKeyListener(keyListener);
+		kPanel.addMouseListener(mouseListener);
 	}
 
 	public void addMouseMotionListener(MouseMotionListener mouseMotionListener){
-		kCanvas.addMouseMotionListener(mouseMotionListener);
+		kPanel.addMouseMotionListener(mouseMotionListener);
 	}
 
 }
