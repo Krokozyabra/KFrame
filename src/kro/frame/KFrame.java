@@ -51,6 +51,7 @@ public class KFrame extends JFrame{
 		setResizable(false);
 
 		kPanel = new KPanel();
+		kPanel.setFocusable(true);
 		kPanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
 		bufferedImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
