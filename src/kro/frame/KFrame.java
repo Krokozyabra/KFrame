@@ -76,7 +76,6 @@ public class KFrame extends JFrame{
 		bufferedImage = bufferedImage2;
 
 		pack();
-		setLocationRelativeTo(null);
 	}
 
 	public void setVisible(boolean b){
