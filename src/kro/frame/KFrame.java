@@ -132,11 +132,11 @@ public class KFrame extends JFrame{
 		return isShowing;
 	}
 
-	public int getWIDTH(){
+	public int getWidth(){
 		return WIDTH;
 	}
 
-	public int getHEIGHT(){
+	public int getHeight(){
 		return HEIGHT;
 	}
 
