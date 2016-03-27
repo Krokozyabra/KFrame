@@ -40,6 +40,7 @@ public class KFrame extends JFrame{
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		kPanel = new KPanel();
+		kPanel.setFocusable(true);
 		kPanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
 		bufferedImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
