@@ -116,12 +116,12 @@ public class KFrame extends JFrame{
 	public void setHeight(int height){
 		changeSize(WIDTH, height);
 	}
-	
+
 	public void setClearScreenBeforePaintint(boolean clearScreenBeforePaintint){
 		this.clearScreenBeforePaintint = clearScreenBeforePaintint;
 	}
 
-	
+
 
 	//setters
 	public void setKPanel(KPanel kPanel){
