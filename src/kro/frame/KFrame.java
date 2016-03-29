@@ -36,6 +36,7 @@ public class KFrame extends JFrame{
 	}
 
 	private void init(){
+		setFocusable(false);
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 

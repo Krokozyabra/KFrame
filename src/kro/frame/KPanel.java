@@ -8,7 +8,11 @@ import javax.swing.JPanel;
 public class KPanel extends JPanel{
 
 	private BufferedImage bufferedImage;
-
+	
+	public KPanel(){
+		super();
+		setFocusable(true);
+	}
 
 	public BufferedImage getBufferedImage(){
 		return bufferedImage;
