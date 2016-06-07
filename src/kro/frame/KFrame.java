@@ -52,6 +52,8 @@ public class KFrame extends JFrame{
 
 		pack();
 		setLocationRelativeTo(null);
+		
+		kPanel.getGraphics().setColor(new Color(255, 255, 255));
 	}
 
 	private void changeSize(int width, int height){
@@ -76,7 +78,7 @@ public class KFrame extends JFrame{
 			Runnable runnable = new Runnable(){
 				public void run(){
 					if(clearScreenBeforePaintint){
-						gr.setColor(new Color(0xffffffff));
+						gr.setColor(new Color(0xffffff));
 						gr.fillRect(0, 0, WIDTH, HEIGHT);
 					}
 
